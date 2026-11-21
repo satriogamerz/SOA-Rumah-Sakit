@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+    <div>
+        <h2 class="fw-bold mb-1">Dashboard</h2>
+        <p class="text-muted mb-0">
+            Selamat datang, {{ user.nama_lengkap }} · Role {{ user.role }}
+        </p>
+    </div>
+</div>
+
+{% if error %}
+<div class="alert alert-warning">{{ error }}</div>
+{% endif %}
+
+<!-- Statistik -->
+<div class="row g-3 mt-2">
+
+    {% for k in ['pasien','dokter','poliklinik','pendaftaran','pengguna','asuransi'] %}
+
+    <div class="col-12 col-sm-6 col-lg-3">
+        <div class="card p-3 h-100">
+            <div class="text-muted text-capitalize mb-2">
+                {{ k }}
+            </div>
+
+            <div class="display-6 fw-semibold text-primary">
+                {{ summary.get(k, '-') }}
+            </div>
+        </div>
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<!-- Menu Modul -->
+<div class="mt-4">
+    <h5 class="fw-bold mb-3">Menu Modul</h5>
+
+    <div class="row g-3">
+
+        {% for k in ['pasien','dokter','poliklinik','pendaftaran','asuransi','pengguna'] %}
+
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="/data/{{ k }}"
+               class="btn btn-outline-primary w-100 py-2 text-capitalize">
+                {{ k }}
+            </a>
+        </div>
+
+        {% endfor %}
+
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="/laporan" class="btn btn-success w-100 py-2">
+                Laporan
+            </a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

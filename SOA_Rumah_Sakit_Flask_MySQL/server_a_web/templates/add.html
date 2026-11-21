@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% set fields = {
+    'poliklinik': ['nama_poliklinik', 'lokasi', 'keterangan'],
+    'pengguna': ['username', 'password', 'nama_lengkap', 'role', 'email', 'aktif'],
+    'dokter': ['pengguna_id', 'poliklinik_id', 'no_sip', 'spesialisasi', 'no_telepon'],
+    'pasien': ['pengguna_id', 'no_rm', 'tanggal_lahir', 'jenis_kelamin', 'alamat', 'no_telepon', 'asuransi_id', 'no_peserta'],
+    'asuransi': ['nama_asuransi', 'jenis', 'nomor_kontak', 'keterangan'],
+    'pendaftaran': ['pasien_id', 'dokter_id', 'poliklinik_id', 'tanggal_kunjungan', 'keluhan', 'status']
+} %}
+
+<div class="card p-4">
+    <h3 class="mb-3 text-capitalize">Tambah {{ resource }}</h3>
+
+    <form method="POST">
+
+        {% for f in fields[resource] %}
+
+            {% if not (user.role == 'pasien' and f == 'pasien_id') %}
+
+            <label class="form-label mt-2">
+                {{ f.replace('_', ' ')|title }}
+            </label>
+
+            {% if resource == 'pendaftaran' and f == 'dokter_id' %}
+
+                <select name="dokter_id" class="form-select" required>
+                    <option value="">Pilih Dokter</option>
+                    {% for item in dokter %}
+                    <option value="{{ item.id }}">
+                        {{ item.spesialisasi }} - Dokter ID {{ item.id }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+            {% elif resource == 'pendaftaran' and f == 'poliklinik_id' %}
+
+                <select name="poliklinik_id" class="form-select" required>
+                    <option value="">Pilih Poliklinik</option>
+                    {% for item in poliklinik %}
+                    <option value="{{ item.id }}">
+                        {{ item.nama_poliklinik }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+            {% elif f == 'password' %}
+                <input type="password" name="{{ f }}"
+                       class="form-control" required>
+
+            {% elif f == 'role' %}
+                <select name="{{ f }}" class="form-select" required>
+                    <option value="admin">Admin</option>
+                    <option value="petugas">Petugas</option>
+                    <option value="dokter">Dokter</option>
+                    <option value="pasien">Pasien</option>
+                </select>
+
+            {% elif f == 'jenis_kelamin' %}
+                <select name="{{ f }}" class="form-select">
+                    <option value="">Pilih jenis kelamin</option>
+                    <option value="L">Laki-laki</option>
+                    <option value="P">Perempuan</option>
+                </select>
+
+            {% elif f == 'aktif' %}
+                <select name="{{ f }}" class="form-select">
+                    <option value="1">Aktif</option>
+                    <option value="0">Tidak Aktif</option>
+                </select>
+
+            {% elif f == 'tanggal_lahir' %}
+                <input type="date" name="{{ f }}" class="form-control">
+
+            {% elif f == 'tanggal_kunjungan' %}
+                <input type="datetime-local" name="{{ f }}"
+                       class="form-control" required>
+
+            {% elif f in ['keterangan', 'alamat', 'keluhan'] %}
+                <textarea name="{{ f }}" class="form-control" rows="3"></textarea>
+
+            {% else %}
+                <input type="text" name="{{ f }}" class="form-control">
+            {% endif %}
+
+            {% endif %}
+        {% endfor %}
+
+        {% if resource == 'pendaftaran' %}
+        <input type="hidden" name="status" value="Menunggu">
+        {% endif %}
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">
+                Simpan Data
+            </button>
+
+            <a href="/data/{{ resource }}" class="btn btn-secondary">
+                Batal
+            </a>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="text-capitalize">Data {{ resource }}</h2>
+        <p class="text-secondary mb-0">Kelola informasi {{ resource }}.</p>
+    </div>
+
+    {% if user.role in ['admin', 'petugas'] %}
+    <a class="btn btn-primary" href="/tambah/{{ resource }}">
+        + Tambah Data
+    </a>
+    {% elif user.role == 'pasien' and resource == 'pendaftaran' %}
+    <a class="btn btn-primary" href="/tambah/{{ resource }}">
+        + Daftar Berobat
+    </a>
+    {% endif %}
+</div>
+
+{% if error %}
+<div class="alert alert-warning">{{ error }}</div>
+{% endif %}
+
+<div class="card p-3">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    {% if rows %}
+                        {% for k in rows[0].keys() %}
+                        <th>{{ k.replace('_', ' ')|title }}</th>
+                        {% endfor %}
+                        {% if user.role in ['admin', 'petugas'] %}
+                        <th>Aksi</th>
+                        {% endif %}
+                    {% else %}
+                        <th>Informasi</th>
+                    {% endif %}
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    {% for v in row.values() %}
+                    <td>{{ v if v is not none and v != '' else '-' }}</td>
+                    {% endfor %}
+
+                    {% if user.role in ['admin', 'petugas'] %}
+                    <td>
+                        <a href="/edit/{{ resource }}/{{ row.id }}"
+                           class="btn btn-sm btn-warning">
+                            Edit
+                        </a>
+
+                        {% if user.role == 'admin' %}
+                        <form method="POST"
+                              action="/hapus/{{ resource }}/{{ row.id }}"
+                              class="d-inline"
+                              onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                            <button class="btn btn-sm btn-danger">
+                                Hapus
+                            </button>
+                        </form>
+                        {% endif %}
+                    </td>
+                    {% endif %}
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="20" class="text-center text-secondary py-4">
+                        Data belum tersedia.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<a href="/dashboard" class="btn btn-secondary mt-3">
+    Kembali ke Dashboard
+</a>
+
+{% endblock %}

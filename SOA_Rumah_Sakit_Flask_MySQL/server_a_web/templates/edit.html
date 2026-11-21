@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="card p-4">
+    <h3 class="mb-3 text-capitalize">Edit Data {{ resource }}</h3>
+
+    <form method="POST">
+
+        {% for key, value in row.items() %}
+
+            {% if key != 'id' and key != 'password_hash' %}
+
+                <label class="form-label mt-2">
+                    {{ key.replace('_', ' ')|title }}
+                </label>
+
+                {% if key == 'password' %}
+                    <input type="password"
+                           name="{{ key }}"
+                           class="form-control">
+
+                {% elif key in ['tanggal_lahir'] %}
+                    <input type="date"
+                           name="{{ key }}"
+                           value="{{ value }}"
+                           class="form-control">
+
+                {% elif key == 'tanggal_kunjungan' %}
+                    <input type="datetime-local"
+                           name="{{ key }}"
+                           value="{{ value|string|replace(' ', 'T')|truncate(16, True, '') }}"
+                           class="form-control">
+
+                {% elif key in ['keterangan', 'alamat', 'keluhan'] %}
+                    <textarea name="{{ key }}"
+                              class="form-control"
+                              rows="3">{{ value or '' }}</textarea>
+
+                {% else %}
+                    <input type="text"
+                           name="{{ key }}"
+                           value="{{ value if value is not none else '' }}"
+                           class="form-control">
+                {% endif %}
+
+            {% endif %}
+
+        {% endfor %}
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">
+                Simpan Perubahan
+            </button>
+
+            <a href="/data/{{ resource }}" class="btn btn-secondary">
+                Kembali
+            </a>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}
