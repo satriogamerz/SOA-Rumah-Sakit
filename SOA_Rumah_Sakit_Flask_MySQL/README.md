@@ -45,8 +45,3 @@ GET `/api/reports/patients`
 Resource: poliklinik, pengguna, dokter, pasien, asuransi, pendaftaran.
 Semua endpoint selain login memerlukan `Authorization: Bearer <token>`.
 RBAC diperiksa pada Server B. Penghapusan data dibatasi untuk admin.
-
-## Bukti Soal 1
-Ambil screenshot terminal Server A (port 5000), terminal Server B (port 5001), landing page, login, dashboard, serta modul. Jika server dijalankan di dua komputer, ubah `API_BASE_URL` pada `.env` Server A menjadi IP komputer Server B, misalnya `http://192.168.1.10:5001`. Server B sudah disetel menerima koneksi jaringan (`0.0.0.0`).
-
-Catatan: aplikasi ini prototipe praktikum, bukan sistem produksi untuk data medis sungguhan.
